@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Earn ₦500 for every referral on RealCash.">
+  <meta name="keywords" content="RealCash, refer and earn, affiliate marketing">
+  <meta property="og:title" content="Earn ₦500 per Referral on RealCash!" />
+  <meta property="og:description" content="Join RealCash for free, refer friends, and earn ₦500 for each person who signs up. Start earning now!" />
+  <meta property="og:image" content="image.jpg" />
+  <meta property="og:url" content="https://realcash.com/" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>RealCash Dashboard</title>
+  <style>
+    body {
+      font-family: "Work Sans", sans-serif;
+      background-color: #f9fafc;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 22px;
+      color: #333;
+    }
+    .balance {
+      text-align: center;
+      background: #007bff;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .balance h2 {
+      margin: 0;
+    }
+    .button-group {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .referral-section-button{
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .button:hover {
+      background-color: #0056b3;
+    }
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .social-icons img {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #555;
+    }
+    .referral-section {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .referral-section input {
+      width: 80%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>RealCash Dashboard</h1>
+      <p>Refer friends and earn ₦500 for every successful referral!</p>
+    </div>
+    <div class="balance">
+      <h2>Your Balance: ₦<span id="balance">0</span></h2>
+    </div>
+    <div class="button-group">
+      <button class="button widthdraw">Withdraw</button>
+      <p>Minimum withdrawal is ₦10,000. Once your balance reaches ₦10,000, you can withdraw to your bank account.</p>
+    </div>
+    <div class="referral-section">
+      <h3>Your Referral Link</h3>
+      <input type="text" class="output" readonly>
+      <button class="referral-section-button">Copy Link</button>
+      <button class="button share-button">Share & Earn</button>
+    </div>
+     <div class="social-icons" id="socialIcons" style="display: none;">
+       <a id="whatsappShare" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp"></a>
+       <a id="facebookShare" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"></a>
+       <a id="twitterShare" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter"></a>
+       <a id="linkedinShare" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733561.png" alt="LinkedIn"></a>
+       <a id="telegramShare" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/906/906377.png" alt="Telegram"></a>
+       <a id="emailShare" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email"></a>
+     </div>
+    <div class="footer">
+      <p>We are giving this money to people who bring others to our platform.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
+    
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqtwV0TPGWxCB7XeKURbsosbDgLT--51U",
+      authDomain: "real-cash-60845.firebaseapp.com",
+      projectId: "real-cash-60845",
+      storageBucket: "real-cash-60845.firebasestorage.app",
+      messagingSenderId: "207134935512",
+      appId: "1:207134935512:web:53671d284fec6648f30aad"
+    };
+
+    // Initialize Firebase and Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let currentUser = null;
+
+    // Firebase Authentication: Check if user is signed in
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        loadBalance(user.uid); // Fetch user balance after login
+      } else {
+        alert("Session expired! Please login again.");
+        window.location.href = "login.html"; // Redirect to login page if not authenticated
+      }
+    });
+    var mainBalance;
+    // Fetch and display the user's balance
+    async function loadBalance(uid) {
+      const userDocRef = doc(db, "users", uid);
+      try {
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          document.getElementById("balance").textContent = userData.balance || 0;
+        } else {
+          console.error("User document does not exist.");
+        }
+      } catch (error) {
+        console.error("Error fetching balance:", error);
+      }
+    }
+
+    // Update the balance in Firestore
+    let referralLinkClicked = false;
+    
+    // Function to update the balance in Firestore
+    async function updateBalance(amount) {
+      if (currentUser) {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        try {
+          await updateDoc(userDocRef, {
+            balance: increment(amount),
+          });
+          const userDoc = await getDoc(userDocRef);
+          if(userDoc.exists()){
+            const userData = userDoc.data();
+            mainBalance = userData.balance;
+            console.log(userData.balance)
+          }
+          
+          document.querySelector('.balance').innerHTML = userData.balance;
+          loadBalance(currentUser.uid);
+        } catch (error) {
+          console.error("Error updating balance:", error);
+        }
+      }
+    }
+    console.log(mainBalance)
+    const linkOutput = document.querySelector('.output');
+    linkOutput.value = document.location.href;
+    // Function to copy the referral link
+    async function copyReferral() {
+      const referralLink = document.location.href;
+      const message = `Join for free! Earn ₦500 for each person you refer. Sign up here: ${referralLink}`;
+      try {
+        await navigator.clipboard.writeText(message);
+        referralLinkClicked = true; // Set flag when link is clicked
+      } catch (error) {
+        console.error("Error copying referral link:", error);
+      }
+    }
+    
+    // Listen for visibility change event to detect when the page is hidden
+    function withdraw() {
+      if (mainBalance > 10000) {
+        alert("Your withdrawal request has been submitted successfully.");
+      } else {
+        alert("Your balance is not up to ₦10,000. You can withdraw when your balance is up to ₦10,000.");
+      }
+    }
+    document.querySelector('.widthdraw').addEventListener('click',() => {
+      withdraw();
+    })
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'hidden' && referralLinkClicked) {
+        updateBalance(500); // Update balance when the page is hidden
+      }
+    });
+    function shareLink() {
+      const referralLink = document.location.origin;
+      const message = encodeURIComponent(
+        `Join for free! Earn ₦500 for every referral. Withdraw real cash to your local bank account. Sign up here: ${referralLink}`
+      );
+      // Update social media links
+      document.getElementById("whatsappShare").href = `https://api.whatsapp.com/send?text=${message}`;
+      document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=${referralLink}`;
+      document.getElementById("twitterShare").href = `https://twitter.com/intent/tweet?text=${message}`;
+      document.getElementById("linkedinShare").href = `https://www.linkedin.com/sharing/share-offsite/?url=${referralLink}`;
+      document.getElementById("telegramShare").href = `https://t.me/share/url?url=${referralLink}&text=${message}`;
+      document.getElementById("emailShare").href = `mailto:?subject=Join+and+Earn+₦500!&body=${message}`;
+    
+      // Display social media icons
+      document.getElementById("socialIcons").style.display = "flex";
+    }
+    document.querySelector('.share-button').addEventListener('click', () => {
+      shareLink();
+    })
+    // Handle referral button click event
+    document.querySelector('.referral-section-button').addEventListener('click', () => {
+      copyReferral();
+    });
+  </script>
+</body>
+</html>

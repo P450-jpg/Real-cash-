@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            width: 80%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-refresh {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-refresh:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Panel</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+            </thead>
+            <tbody id="userTable">
+                <!-- User data will be dynamically inserted here -->
+            </tbody>
+        </table>
+        <button class="btn-refresh">Refresh</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqtwV0TPGWxCB7XeKURbsosbDgLT--51U",
+            authDomain: "real-cash-60845.firebaseapp.com",
+            projectId: "real-cash-60845",
+            storageBucket: "real-cash-60845.firebasestorage.app",
+            messagingSenderId: "207134935512",
+            appId: "1:207134935512:web:53671d284fec6648f30aad"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to fetch users from Firestore
+        async function fetchUsers() {
+            const userTable = document.getElementById("userTable");
+            userTable.innerHTML = ""; // Clear the table before adding new rows
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    const row = `
+                        <tr>
+                            <td>${userData.name}</td>
+                            <td>${userData.email}</td>
+                            <td>${userData.phone}</td>
+                        </tr>
+                    `;
+                    userTable.innerHTML += row;
+                });
+            } catch (error) {
+                alert("Error fetching users: " + error.message);
+            }
+        }
+      document.querySelector('.btn-refresh').addEventListener('click',() => {
+        fetchUsers();
+      })
+        // Fetch users on page load
+        fetchUsers();
+    </script>
+</body>
+</html>
